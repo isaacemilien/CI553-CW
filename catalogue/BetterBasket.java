@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collections;
 
 /**
- * Write a description of class BetterBasket here.
+ * Better basket allows stacking of purchased prodcut of the same ID and organisation of product list sorting 
  * 
  * @author  Your Name 
  * @version 1.0
