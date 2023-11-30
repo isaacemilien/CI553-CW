@@ -2,6 +2,7 @@ package catalogue;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Better basket allows stacking of purchased prodcut of the same ID and organisation of product list sorting 
@@ -17,13 +18,25 @@ public class BetterBasket extends Basket implements Serializable
   @Override
   public boolean add( Product pr )
   {                              
+
     for (Product product : this) {
       if(product.getProductNum().equals(pr.getProductNum())){
         product.setQuantity(product.getQuantity() + 1);
         return true;
       }
     }
-    
-    return super.add( pr );     // Call add in ArrayList
+
+    boolean wasAdded = super.add( pr );
+
+    // Refactor to lambda later
+    Collections.sort(this, new Comparator<Product>() {
+      public int compare(Product pr1, Product pr2){
+        if(Integer.parseInt(pr1.getProductNum()) == Integer.parseInt(pr2.getProductNum())) return 0;
+
+        return Integer.parseInt(pr1.getProductNum()) < Integer.parseInt(pr2.getProductNum()) ? -1 : 1;
+      }
+    });
+
+    return wasAdded;     // Call add in ArrayList
   }
 }
