@@ -22,6 +22,21 @@ class Setup
 //  "drop table StockList",
 
 
+  "drop table ReservationStockTable" +
+  "CREATE TABLE ReservationStockTable (" +
+  "    StudentID INT," +
+  "    CourseID INT," +
+  "    PRIMARY KEY (StudentID, CourseID)," +
+  "    FOREIGN KEY (StudentID) REFERENCES Students(StudentID)," +
+  "    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)" +
+  ");" +
+
+  "drop table ReservationTable",
+  "create table ReservationTable ("+
+      "reservationID integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), description Varchar(40), PRIMARY KEY (reservationID))",
+
+  "insert into ReservationTable(description) values('Free Pavan, please I`m begging you')",
+
   "drop table ProductTable",
   "create table ProductTable ("+
       "productNo      Char(4)," +

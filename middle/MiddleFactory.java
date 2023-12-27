@@ -20,6 +20,15 @@ public interface MiddleFactory
    * @return instance of StockReader
    * @throws StockException if issue
    */
+  public ReservationReader makeReservationReader() throws StockException;
+
+  public ReservationReadWriter makeReservationReadWriter() throws StockException;
+
+  /**
+   * Return an object to access the database for read only access
+   * @return instance of StockReader
+   * @throws StockException if issue
+   */
   public StockReader makeStockReader() throws StockException;
 
   /**

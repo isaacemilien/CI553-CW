@@ -5,6 +5,8 @@
 
 package middle;
 
+import dbAccess.ReservationR;
+import dbAccess.ReservationRW;
 import dbAccess.StockR;
 import dbAccess.StockRW;
 import orders.Order;
@@ -22,7 +24,28 @@ public class LocalMiddleFactory implements MiddleFactory
   private static StockR  aStockR  = null;
   private static StockRW aStockRW = null;
   private static Order   aOrder   = null;
+  private static ReservationReader aReservationR = null;
+  private static ReservationReadWriter aReservationRW = null;
   
+  /**
+   * Return an object to access the database for read only access.
+   * All users share this same object.
+   */
+  
+  public ReservationReader makeReservationReader() throws StockException
+  {
+    if ( aReservationR == null )
+      aReservationR = new ReservationR();
+    return aReservationR;
+  }
+
+  public ReservationReadWriter makeReservationReadWriter() throws StockException
+  {
+    if ( aReservationRW == null )
+      aReservationRW = new ReservationRW();
+    return aReservationRW;
+  }
+
   /**
    * Return an object to access the database for read only access.
    * All users share this same object.

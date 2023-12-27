@@ -87,6 +87,9 @@ public class Basket extends ArrayList<Product> implements Serializable
         fr.format("\n");
         total += pr.getPrice() * number;
       }
+      // if reservation
+      //   print reservationID 
+      fr.format("----------------------------\n");
       fr.format("----------------------------\n");
       fr.format("Total                       ");
       fr.format("%s%7.2f\n",    csign, total );

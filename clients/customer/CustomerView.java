@@ -4,6 +4,8 @@ import catalogue.Basket;
 import catalogue.BetterBasket;
 import clients.Picture;
 import middle.MiddleFactory;
+import middle.ReservationReadWriter;
+import middle.ReservationReader;
 import middle.StockReader;
 
 import javax.swing.*;
@@ -23,20 +25,24 @@ public class CustomerView implements Observer
   {
     public static final String CHECK  = "Check";
     public static final String CLEAR  = "Clear";
+    public static final String RESERVATION  = "Res";
   }
 
   private static final int H = 300;       // Height of window pixels
   private static final int W = 400;       // Width  of window pixels
 
   private final JLabel      theAction  = new JLabel();
+  private final JLabel      reservationLabel  = new JLabel();
   private final JTextField  theInput   = new JTextField();
   private final JTextArea   theOutput  = new JTextArea();
   private final JScrollPane theSP      = new JScrollPane();
   private final JButton     theBtCheck = new JButton( Name.CHECK );
+  private final JButton     theBtReservation = new JButton( Name.RESERVATION );
   private final JButton     theBtClear = new JButton( Name.CLEAR );
 
   private Picture thePicture = new Picture(80,80);
   private StockReader theStock   = null;
+  private ReservationReadWriter     theReservation     = null;
   private CustomerController cont= null;
 
   /**
@@ -52,6 +58,7 @@ public class CustomerView implements Observer
     try                                             // 
     {      
       theStock  = mf.makeStockReader();             // Database Access
+      theReservation  = mf.makeReservationReadWriter();             // Database Access
     } catch ( Exception e )
     {
       System.out.println("Exception: " + e.getMessage() );
@@ -68,6 +75,11 @@ public class CustomerView implements Observer
     theBtCheck.addActionListener(                   // Call back code
       e -> cont.doCheck( theInput.getText() ) );
     cp.add( theBtCheck );                           //  Add to canvas
+    
+    theBtReservation.setBounds( 16, 25+60*3, 80, 40 );    // Check button
+    theBtReservation.addActionListener(                   // Call back code
+      e -> cont.doReservation(theInput.getText()) );
+    cp.add( theBtReservation );                           //  Add to canvas
 
     theBtClear.setBounds( 16, 25+60*1, 80, 40 );    // Clear button
     theBtClear.addActionListener(                   // Call back code

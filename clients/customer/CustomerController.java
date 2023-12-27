@@ -36,8 +36,20 @@ public class CustomerController
   public void doClear()
   {
     model.doClear();
+    model.reservationCreated = false;
+    // model.clearBasket();
+    // model.clearReservation();
   }
 
-  
+  public void doReservation(String pn){
+    // if(!reservationCreated){
+    // }
+    if(!pn.isEmpty()){
+      System.out.println("lsdkjflskj");
+      System.out.println(pn);
+      model.removeStock(pn);
+    }
+    model.doReservation();
+  }
 }
 

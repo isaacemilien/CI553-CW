@@ -5,7 +5,10 @@ import catalogue.Product;
 import debug.DEBUG;
 import middle.MiddleFactory;
 import middle.OrderProcessing;
+import middle.ReservationReadWriter;
+import middle.ReservationReader;
 import middle.StockException;
+import middle.StockReadWriter;
 import middle.StockReader;
 
 import javax.swing.*;
@@ -23,9 +26,11 @@ public class CustomerModel extends Observable
 
   private String      pn = "";                    // Product being processed
 
-  private StockReader     theStock     = null;
+  private StockReadWriter     theStock     = null;
+  private ReservationReadWriter     theReservation     = null;
   private OrderProcessing theOrder     = null;
   private ImageIcon       thePic       = null;
+  public boolean reservationCreated = false;
 
   /*
    * Construct the model of the Customer
@@ -35,7 +40,8 @@ public class CustomerModel extends Observable
   {
     try                                          // 
     {  
-      theStock = mf.makeStockReader();           // Database access
+      theStock = mf.makeStockReadWriter();           // Database access
+      theReservation = mf.makeReservationReadWriter();           // Database access
     } catch ( Exception e )
     {
       DEBUG.error("CustomerModel.constructor\n" +
@@ -131,6 +137,28 @@ public class CustomerModel extends Observable
   protected Basket makeBasket()
   {
     return new Basket();
+  }
+
+  public void doReservation(){
+
+    try {
+      if(!reservationCreated){
+        theReservation.generateNewReservation();
+        System.out.println(theReservation.exists("lsdflkjdsflk"));
+        reservationCreated = true;
+      }
+    } catch (StockException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  public void removeStock(String pn ){
+    try {
+      theStock.buyStock(pn, 1);
+    } catch (StockException e) {
+      e.printStackTrace();
+    }
   }
 }
 
