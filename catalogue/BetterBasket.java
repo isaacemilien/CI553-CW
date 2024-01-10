@@ -28,14 +28,7 @@ public class BetterBasket extends Basket implements Serializable
 
     boolean wasAdded = super.add( pr );
 
-    // Refactor to lambda later
-    Collections.sort(this, new Comparator<Product>() {
-      public int compare(Product pr1, Product pr2){
-        if(Integer.parseInt(pr1.getProductNum()) == Integer.parseInt(pr2.getProductNum())) return 0;
-
-        return Integer.parseInt(pr1.getProductNum()) < Integer.parseInt(pr2.getProductNum()) ? -1 : 1;
-      }
-    });
+    Collections.sort(this, Comparator.comparing(Product::getProductNum));
 
     return wasAdded;     // Call add in ArrayList
   }
