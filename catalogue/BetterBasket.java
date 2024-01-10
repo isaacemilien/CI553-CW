@@ -18,7 +18,6 @@ public class BetterBasket extends Basket implements Serializable
   @Override
   public boolean add( Product pr )
   {                              
-
     for (Product product : this) {
       if(product.getProductNum().equals(pr.getProductNum())){
         product.setQuantity(product.getQuantity() + 1);

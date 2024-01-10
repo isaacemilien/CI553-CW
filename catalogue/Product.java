@@ -34,7 +34,10 @@ public class Product implements Serializable
     theQuantity    = aQuantity;       // Quantity involved
   }
   
-  public String getProductNum()  { return theProductNum; }
+  public Product(int i, String aDescription, double aPrice, int aQuantity) {
+}
+
+public String getProductNum()  { return theProductNum; }
   public String getDescription() { return theDescription; }
   public double getPrice()       { return thePrice; }
   public int    getQuantity()    { return theQuantity; }
