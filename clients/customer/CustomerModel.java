@@ -31,6 +31,8 @@ public class CustomerModel extends Observable
   private StockReadWriter     theStock     = null;
   private OrderProcessing theOrder     = null;
   private ImageIcon       thePic       = null;
+  private boolean reservationExists = false;
+  private int currentReservationID = 0;
 
   private ReservationReadWriter theReservationReadWriter = null;
 
@@ -79,7 +81,7 @@ public class CustomerModel extends Observable
         if ( pr.getQuantity() >= amount )       //  In stock?
         { 
           theAction =                           //   Display 
-            String.format( "%s : %7.2f (%2d) ", //
+            String.format( "%s : %7.2f (%2d) dssdf", //
               pr.getDescription(),              //    description
               pr.getPrice(),                    //    price
               pr.getQuantity() );               //    quantity
@@ -113,6 +115,9 @@ public class CustomerModel extends Observable
     theAction = "Enter Product Number";       // Set display
     thePic = null;                            // No picture
     setChanged(); notifyObservers(theAction);
+
+    reservationExists = false;
+    currentReservationID = 0;
   }
   
   /**
@@ -132,26 +137,38 @@ public class CustomerModel extends Observable
     setChanged(); notifyObservers("START only"); // Notify
   }
 
-  public void doReservation(){
-    System.out.println("Doing reservation model origin!");
-    System.out.println("Adding new reservation!");
-    theReservationReadWriter.insertReservation();
+  public void doReservation(String pnum){
+    // create new reservation if doesnt exist
+    if(!reservationExists){
+        reservationExists = true;
+        theReservationReadWriter.insertReservation();
+        currentReservationID = theReservationReadWriter.getReservationsSize();
+    }
 
-    System.out.println("Reservations: " + theReservationReadWriter.getReservationsSize());
+    // Add stock to reservation
+    if(!pnum.equals("")){
+      // remove stock
+      try {
+        theStock.buyStock(pnum, 1);
+      } catch (StockException e) {
+        e.printStackTrace();
+      }
 
-
-    System.out.println("insert stock 3 into reservation stock");
-    theReservationReadWriter.insertReservationStock(1, "0003", 1);
-
-    System.out.println("Change stock level for reservation 1 : stockno 0001 : to 7");
-    theReservationReadWriter.setReservationStockLevel(1, "0001", 7);
-
-    List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(1);
-    System.out.println("Getting all reservation stocks for id 1");
-    reservationStocks.stream().forEach(r -> System.out.println(r.getProductNo() + " stock level: " + r.getStockLevel()));
-    
-
-    System.out.println("Check if item 0001 already exists in id 1: " +  itemExistsInReservationID(1, "0001"));
+      if(!itemExistsInReservationID(currentReservationID, pnum)){
+        theReservationReadWriter.insertReservationStock(currentReservationID, pnum, 1);
+      }else{
+        List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(currentReservationID);
+        
+        int currentProductStockLevel = 0;
+        for (ReservationStock reservationStock : reservationStocks) {
+          if(reservationStock.getProductNo().equals(pnum)){
+            currentProductStockLevel = reservationStock.getStockLevel();
+          }
+        }
+        
+        theReservationReadWriter.setReservationStockLevel(currentReservationID, pnum, currentProductStockLevel++);
+      }
+    }
   }
 
   public boolean itemExistsInReservationID(int reservationID, String productNo){

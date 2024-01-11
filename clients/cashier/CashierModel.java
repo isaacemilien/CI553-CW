@@ -2,9 +2,11 @@ package clients.cashier;
 
 import catalogue.BetterBasket;
 import catalogue.Product;
+import clients.customer.ReservationStock;
 import debug.DEBUG;
 import middle.*;
 
+import java.util.List;
 import java.util.Observable;
 
 /**
@@ -24,6 +26,7 @@ public class CashierModel extends Observable
 
   private StockReadWriter theStock     = null;
   private OrderProcessing theOrder     = null;
+  private ReservationReadWriter theReservationReadWriter = null;
 
   /**
    * Construct the model of the Cashier
@@ -36,6 +39,7 @@ public class CashierModel extends Observable
     {      
       theStock = mf.makeStockReadWriter();        // Database access
       theOrder = mf.makeOrderProcessing();        // Process order
+      theReservationReadWriter = mf.makeReservationReadWriter();
     } catch ( Exception e )
     {
       DEBUG.error("CashierModel.constructor\n%s", e.getMessage() );
@@ -195,6 +199,19 @@ public class CashierModel extends Observable
   protected BetterBasket makeBasket()
   {
     return new BetterBasket();
+  }
+
+  public void claimReservation(int reservationID){
+    List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(reservationID);
+    for (ReservationStock reservationStock : reservationStocks) {
+      for (int i = 0; i < reservationStock.getStockLevel(); i++) {
+        try {
+          theBasket.add(theStock.getDetails(reservationStock.getProductNo()));
+        } catch (StockException e) {
+          e.printStackTrace();
+        }
+      }
+    }
   }
 }
   

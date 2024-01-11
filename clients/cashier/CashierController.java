@@ -46,4 +46,9 @@ public class CashierController
   {
     model.doBought();
   }
+
+  public void claimReservation(String reservationID){
+
+    model.claimReservation(Integer.parseInt(reservationID));
+  }
 }
