@@ -21,16 +21,6 @@ class Setup
 //  "drop table ProductList",
 //  "drop table StockList",
 
-
-  "drop table ReservationStockTable" +
-  "CREATE TABLE ReservationStockTable (" +
-  "    StudentID INT," +
-  "    CourseID INT," +
-  "    PRIMARY KEY (StudentID, CourseID)," +
-  "    FOREIGN KEY (StudentID) REFERENCES Students(StudentID)," +
-  "    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)" +
-  ");" +
-
   "drop table ReservationTable",
   "create table ReservationTable ("+
       "reservationID integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), description Varchar(40), PRIMARY KEY (reservationID))",
@@ -64,7 +54,7 @@ class Setup
   "drop table StockTable",
   "create table StockTable ("+
       "productNo      Char(4)," +
-      "stockLevel     Integer)",
+      "stockLevel     Integer, PRIMARY KEY (productNo))",
 
   "insert into StockTable values ( '0001',  90 )",
   "insert into StockTable values ( '0002',  20 )",
@@ -73,6 +63,12 @@ class Setup
   "insert into StockTable values ( '0005',  17 )",
   "insert into StockTable values ( '0006',  15 )",
   "insert into StockTable values ( '0007',  01 )",
+
+
+  "drop table ReservationStockTable",
+  "create table ReservationStockTable ("+
+      "reservationID integer, productNo char(4), stockLevel integer, PRIMARY KEY (reservationID, productNo), FOREIGN KEY (reservationID) REFERENCES ReservationTable(reservationID), FOREIGN KEY (productNo) REFERENCES StockTable(productNo))",
+
 
   "select * from StockTable, ProductTable " +
           " where StockTable.productNo = ProductTable.productNo"
