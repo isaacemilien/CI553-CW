@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import clients.customer.ReservationStock;
@@ -69,11 +70,15 @@ public class ReservationR implements ReservationReader{
     return theCon;
   }
 
+    /**
+    * Retrieves the total number of reservations from the ReservationTable.
+    *
+    * @return The count of reservations.
+    */
     @Override
-    public int getReservationsSize(){
-        try
-        {
-            ResultSet rs   = getStatementObject().executeQuery("SELECT * FROM ReservationTable");
+    public int getReservationsSize() {
+        try {
+            ResultSet rs = getStatementObject().executeQuery("SELECT * FROM ReservationTable");
             int count = 0;
 
             while (rs.next()) {
@@ -81,28 +86,39 @@ public class ReservationR implements ReservationReader{
             }
 
             return count;
-        } catch ( SQLException e )
-        {
-            return 0;
+        } catch (SQLException e) {
+            return 0; // Return 0 in case of an exception
         }
     }
 
+
+    /**
+    * Retrieves all ReservationStock objects associated with the given reservationID.
+    *
+    * @param reservationID The ID of the reservation.
+    * @return A list of ReservationStock objects.
+    */
     @Override
     public List<ReservationStock> getAllReservationStockWhereID(int reservationID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllReservationStockWhereID'");
-    }
+        ResultSet rs;
+        List<ReservationStock> reservationStocks = new ArrayList<>();
 
-    @Override
-    public boolean itemExistsInReservationID(ReservationStock reservationStock) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'itemExistsInReservationID'");
-    }
+        try {
+            rs = getStatementObject().executeQuery("SELECT * FROM ReservationStockTable WHERE reservationID = " + reservationID);
 
-    @Override
-    public int getStockLevelForReservationStock(int reservationID, String stockNo) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getStockLevelForReservationStock'");
+            while (rs.next()) {
+                Integer id = rs.getInt("reservationID");
+                String productNo = rs.getString("productNo");
+                Integer stockLevel = rs.getInt("stockLevel");
+
+                reservationStocks.add(new ReservationStock(id, productNo, stockLevel));
+            }
+
+            return reservationStocks;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return reservationStocks;
+        }
     }
     
 }

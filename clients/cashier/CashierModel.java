@@ -201,17 +201,23 @@ public class CashierModel extends Observable
     return new BetterBasket();
   }
 
-  public void claimReservation(int reservationID){
-    List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(reservationID);
-    for (ReservationStock reservationStock : reservationStocks) {
-      for (int i = 0; i < reservationStock.getStockLevel(); i++) {
-        try {
-          theBasket.add(theStock.getDetails(reservationStock.getProductNo()));
-        } catch (StockException e) {
-          e.printStackTrace();
-        }
+  /**
+  * Claims a reservation by adding the reserved items to the shopping basket.
+  *
+  * @param reservationID The ID of the reservation to be claimed.
+  */
+  public void claimReservation(int reservationID) {
+      List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(reservationID);
+
+      for (ReservationStock reservationStock : reservationStocks) {
+          for (int i = 0; i < reservationStock.getStockLevel(); i++) {
+              try {
+                  theBasket.add(theStock.getDetails(reservationStock.getProductNo()));
+              } catch (StockException e) {
+                  e.printStackTrace(); // Exception handling
+              }
+          }
       }
-    }
   }
 }
   

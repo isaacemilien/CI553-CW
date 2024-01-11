@@ -68,11 +68,15 @@ public class ReservationRW implements ReservationReadWriter{
     return theCon;
   }
 
+    /**
+    * Retrieves the total number of reservations from the ReservationTable.
+    *
+    * @return The count of reservations.
+    */
     @Override
-    public int getReservationsSize(){
-        try
-        {
-            ResultSet rs   = getStatementObject().executeQuery("SELECT * FROM ReservationTable");
+    public int getReservationsSize() {
+        try {
+            ResultSet rs = getStatementObject().executeQuery("SELECT * FROM ReservationTable");
             int count = 0;
 
             while (rs.next()) {
@@ -80,74 +84,83 @@ public class ReservationRW implements ReservationReadWriter{
             }
 
             return count;
-        } catch ( SQLException e )
-        {
-            return 0;
+        } catch (SQLException e) {
+            return 0; // Return 0 in case of an exception
         }
     }
 
+    /**
+    * Retrieves all ReservationStock objects associated with the given reservationID.
+    *
+    * @param reservationID The ID of the reservation.
+    * @return A list of ReservationStock objects.
+    */
     @Override
     public List<ReservationStock> getAllReservationStockWhereID(int reservationID) {
-            ResultSet rs;
-            List<ReservationStock> reservationStocks = new ArrayList<ReservationStock>();
-            try {
-                rs = getStatementObject().executeQuery("SELECT * FROM ReservationStockTable WHERE reservationID = " + reservationID);
+        ResultSet rs;
+        List<ReservationStock> reservationStocks = new ArrayList<>();
 
-                while (rs.next()) {
-                    Integer id = rs.getInt("reservationID");
-                    String productNo = rs.getString("productNo");
-                    Integer stockLevel = rs.getInt("stockLevel");
-                    
-                    reservationStocks.add(new ReservationStock(id, productNo, stockLevel));
-                }
+        try {
+            rs = getStatementObject().executeQuery("SELECT * FROM ReservationStockTable WHERE reservationID = " + reservationID);
 
-                return reservationStocks;            
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                
-                return reservationStocks;            
+            while (rs.next()) {
+                Integer id = rs.getInt("reservationID");
+                String productNo = rs.getString("productNo");
+                Integer stockLevel = rs.getInt("stockLevel");
+
+                reservationStocks.add(new ReservationStock(id, productNo, stockLevel));
             }
+
+            return reservationStocks;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return reservationStocks;
+        }
     }
 
-    @Override
-    public boolean itemExistsInReservationID(ReservationStock reservationStock) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'itemExistsInReservationID'");
-    }
-
-    @Override
-    public int getStockLevelForReservationStock(int reservationID, String stockNo) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getStockLevelForReservationStock'");
-    }
-
+    /**
+    * Inserts a new reservation into the ReservationTable.
+    */
     @Override
     public void insertReservation() {
-            try {
-                getStatementObject().executeUpdate("INSERT INTO ReservationTable VALUES DEFAULT");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-    }
-    @Override
-    public void insertReservationStock(int reservationID, String productNo, int stockLevel) {
-            try {
-                getStatementObject().executeUpdate(String.format("INSERT INTO ReservationStockTable(reservationID, productNo, stockLevel) VALUES(%d, '%s', %d)", reservationID, productNo, stockLevel));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try {
+            getStatementObject().executeUpdate("INSERT INTO ReservationTable VALUES DEFAULT");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+    * Inserts a new ReservationStock into the ReservationStockTable.
+    *
+    * @param reservationID The ID of the reservation.
+    * @param productNo     The product number.
+    * @param stockLevel    The stock level.
+    */
+    @Override
+    public void insertReservationStock(int reservationID, String productNo, int stockLevel) {
+        try {
+            getStatementObject().executeUpdate(String.format("INSERT INTO ReservationStockTable(reservationID, productNo, stockLevel) VALUES(%d, '%s', %d)", reservationID, productNo, stockLevel));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+    * Sets the stock level for a ReservationStock.
+    *
+    * @param reservationID The ID of the reservation.
+    * @param productNo     The product number.
+    * @param stockLevel    The new stock level.
+    */
     @Override
     public void setReservationStockLevel(int reservationID, String productNo, int stockLevel) {
-            try {
-                getStatementObject().executeUpdate(String.format("UPDATE ReservationStockTable " + 
-                "SET stockLevel = %d " + 
-                "WHERE reservationID = %d AND productNo = '%s'", stockLevel, reservationID, productNo));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }       
-    }
-    
+        try {
+            getStatementObject().executeUpdate(String.format("UPDATE ReservationStockTable " +
+                    "SET stockLevel = %d " +
+                    "WHERE reservationID = %d AND productNo = '%s'", stockLevel, reservationID, productNo));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }    
 }

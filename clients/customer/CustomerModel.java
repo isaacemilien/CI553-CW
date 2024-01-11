@@ -137,51 +137,66 @@ public class CustomerModel extends Observable
     setChanged(); notifyObservers("START only"); // Notify
   }
 
-  public void doReservation(String pnum){
-    // create new reservation if doesnt exist
-    if(!reservationExists){
+/**
+ * Performs a reservation for the specified product.
+ * Creates a new reservation if it doesn't exist and adds the product to the reservation.
+ * Updates stock levels accordingly.
+ *
+ * @param pnum The product number for the reservation.
+ */
+public void doReservation(String pnum) {
+    if (!reservationExists) {
         reservationExists = true;
         theReservationReadWriter.insertReservation();
         currentReservationID = theReservationReadWriter.getReservationsSize();
     }
 
-    // Add stock to reservation
-    if(!pnum.equals("")){
-      // remove stock
-      try {
-        theStock.buyStock(pnum, 1);
-      } catch (StockException e) {
-        e.printStackTrace();
-      }
-
-      if(!itemExistsInReservationID(currentReservationID, pnum)){
-        theReservationReadWriter.insertReservationStock(currentReservationID, pnum, 1);
-      }else{
-        List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(currentReservationID);
-        
-        int currentProductStockLevel = 0;
-        for (ReservationStock reservationStock : reservationStocks) {
-          if(reservationStock.getProductNo().equals(pnum)){
-            currentProductStockLevel = reservationStock.getStockLevel();
-          }
+    if (!pnum.equals("")) {
+        try {
+            theStock.buyStock(pnum, 1);
+        } catch (StockException e) {
+            e.printStackTrace(); // Exception handling
         }
-        
-        theReservationReadWriter.setReservationStockLevel(currentReservationID, pnum, currentProductStockLevel++);
-      }
-    }
-  }
 
-  public boolean itemExistsInReservationID(int reservationID, String productNo){
+        if (!itemExistsInReservationID(currentReservationID, pnum)) {
+            theReservationReadWriter.insertReservationStock(currentReservationID, pnum, 1);
+        } else {
+            List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(currentReservationID);
+            int currentProductStockLevel = 0;
+
+            for (ReservationStock reservationStock : reservationStocks) {
+                if (reservationStock.getProductNo().equals(pnum)) {
+                    currentProductStockLevel = reservationStock.getStockLevel();
+                }
+            }
+
+            theReservationReadWriter.setReservationStockLevel(currentReservationID, pnum, currentProductStockLevel++);
+        }
+    }
+}
+
+/**
+ * Checks if a product with the given productNo exists in the ReservationStock
+ * associated with the specified reservationID.
+ *
+ * @param reservationID The ID of the reservation.
+ * @param productNo     The product number to check for existence.
+ * @return True if the product exists in the reservation, false otherwise.
+ */
+public boolean itemExistsInReservationID(int reservationID, String productNo) {
+    // Retrieve all ReservationStock objects for the given reservationID
     List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(reservationID);
 
+    // Check if the provided productNo exists in any ReservationStock
     for (ReservationStock reservationStock : reservationStocks) {
-      if(reservationStock.getProductNo().equals(productNo)){
-        return true;
-      }
+        if (reservationStock.getProductNo().equals(productNo)) {
+            return true;
+        }
     }
 
+    // Product not found in any ReservationStock
     return false;
-  }
+}
 
   /**
    * Make a new Basket
