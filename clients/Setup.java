@@ -21,7 +21,6 @@ class Setup
 //  "drop table ProductList",
 //  "drop table StockList",
 
-
   "drop table ProductTable",
   "create table ProductTable ("+
       "productNo      Char(4)," +
@@ -46,9 +45,26 @@ class Setup
 //  "select * from ProductTable",
 
 
+  "ALTER TABLE ReservationStockTable " +
+  "DROP CONSTRAINT FK_reservationID",
+  "ALTER TABLE ReservationStockTable " +
+  "DROP CONSTRAINT FK_productNo",
+
+  "drop table ReservationTable",
+  "create table ReservationTable ("+
+      "ReservationID    Integer, PRIMARY KEY (ReservationID))",
+
+
+  "drop table ReservationStockTable",
+  "create table ReservationStockTable ("+
+      "ReservationID    Integer," +
+      "productNo      Char(4)," +
+      "stockLevel     Integer," +
+      "PRIMARY KEY (reservationID, productNo))" ,
+
   "drop table StockTable",
   "create table StockTable ("+
-      "productNo      Char(4)," +
+      "productNo      Char(4), PRIMARY KEY (productNo)," +
       "stockLevel     Integer)",
 
   "insert into StockTable values ( '0001',  90 )",
@@ -59,9 +75,18 @@ class Setup
   "insert into StockTable values ( '0006',  15 )",
   "insert into StockTable values ( '0007',  01 )",
 
+  "ALTER TABLE ReservationStockTable " +
+  "ADD CONSTRAINT FK_reservationID " +
+  "FOREIGN KEY (reservationID) " +
+  "REFERENCES ReservationTable(reservationID) ",
+
+  "ALTER TABLE ReservationStockTable " +
+  "ADD CONSTRAINT FK_productNo " +
+  "FOREIGN KEY (productNo) " +
+  "REFERENCES StockTable(productNo) ",
+
   "select * from StockTable, ProductTable " +
           " where StockTable.productNo = ProductTable.productNo"
-
  };
 
   public static void main(String[] args)
