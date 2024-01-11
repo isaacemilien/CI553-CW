@@ -88,6 +88,7 @@ class Setup
   "INSERT INTO ReservationTable VALUES DEFAULT",
   "INSERT INTO ReservationTable VALUES DEFAULT",
   "insert into ReservationStockTable values(1, '0001', 1)",
+  "insert into ReservationStockTable values(1, '0002', 1)",
 
   "select * from StockTable, ProductTable " +
           " where StockTable.productNo = ProductTable.productNo"

@@ -7,9 +7,13 @@ import middle.MiddleFactory;
 import middle.OrderProcessing;
 import middle.ReservationReadWriter;
 import middle.StockException;
+import middle.StockReadWriter;
 import middle.StockReader;
 
 import javax.swing.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 /**
@@ -24,7 +28,7 @@ public class CustomerModel extends Observable
 
   private String      pn = "";                    // Product being processed
 
-  private StockReader     theStock     = null;
+  private StockReadWriter     theStock     = null;
   private OrderProcessing theOrder     = null;
   private ImageIcon       thePic       = null;
 
@@ -38,7 +42,7 @@ public class CustomerModel extends Observable
   {
     try                                          // 
     {  
-      theStock = mf.makeStockReader();           // Database access
+      theStock = mf.makeStockReadWriter();           // Database access
       theReservationReadWriter = mf.makeReservationReadWriter();
     } catch ( Exception e )
     {
@@ -134,6 +138,32 @@ public class CustomerModel extends Observable
     theReservationReadWriter.insertReservation();
 
     System.out.println("Reservations: " + theReservationReadWriter.getReservationsSize());
+
+
+    System.out.println("insert stock 3 into reservation stock");
+    theReservationReadWriter.insertReservationStock(1, "0003", 1);
+
+    System.out.println("Change stock level for reservation 1 : stockno 0001 : to 7");
+    theReservationReadWriter.setReservationStockLevel(1, "0001", 7);
+
+    List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(1);
+    System.out.println("Getting all reservation stocks for id 1");
+    reservationStocks.stream().forEach(r -> System.out.println(r.getProductNo() + " stock level: " + r.getStockLevel()));
+    
+
+    System.out.println("Check if item 0001 already exists in id 1: " +  itemExistsInReservationID(1, "0001"));
+  }
+
+  public boolean itemExistsInReservationID(int reservationID, String productNo){
+    List<ReservationStock> reservationStocks = theReservationReadWriter.getAllReservationStockWhereID(reservationID);
+
+    for (ReservationStock reservationStock : reservationStocks) {
+      if(reservationStock.getProductNo().equals(productNo)){
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**

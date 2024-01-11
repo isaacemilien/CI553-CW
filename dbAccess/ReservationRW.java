@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import clients.customer.ReservationStock;
@@ -87,8 +88,26 @@ public class ReservationRW implements ReservationReadWriter{
 
     @Override
     public List<ReservationStock> getAllReservationStockWhereID(int reservationID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllReservationStockWhereID'");
+            ResultSet rs;
+            List<ReservationStock> reservationStocks = new ArrayList<ReservationStock>();
+            try {
+                rs = getStatementObject().executeQuery("SELECT * FROM ReservationStockTable WHERE reservationID = " + reservationID);
+
+                while (rs.next()) {
+                    Integer id = rs.getInt("reservationID");
+                    String productNo = rs.getString("productNo");
+                    Integer stockLevel = rs.getInt("stockLevel");
+                    
+                    reservationStocks.add(new ReservationStock(id, productNo, stockLevel));
+                }
+
+                return reservationStocks;            
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                
+                return reservationStocks;            
+            }
     }
 
     @Override
@@ -112,15 +131,23 @@ public class ReservationRW implements ReservationReadWriter{
             }
     }
     @Override
-    public void insertReservationStock(int reservationID, String productNo) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertReservation'");
+    public void insertReservationStock(int reservationID, String productNo, int stockLevel) {
+            try {
+                getStatementObject().executeUpdate(String.format("INSERT INTO ReservationStockTable(reservationID, productNo, stockLevel) VALUES(%d, '%s', %d)", reservationID, productNo, stockLevel));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
     }
 
     @Override
-    public void setReservationStockLevel(int reservationID, String stockNo, int stockLevel) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setReservationStockLevel'");
+    public void setReservationStockLevel(int reservationID, String productNo, int stockLevel) {
+            try {
+                getStatementObject().executeUpdate(String.format("UPDATE ReservationStockTable " + 
+                "SET stockLevel = %d " + 
+                "WHERE reservationID = %d AND productNo = '%s'", stockLevel, reservationID, productNo));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }       
     }
     
 }
