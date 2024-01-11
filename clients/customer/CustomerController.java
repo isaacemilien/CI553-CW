@@ -36,8 +36,14 @@ public class CustomerController
   public void doClear()
   {
     model.doClear();
+
+    // Temp place doclear till UI implement
+    doReservation();
   }
 
-  
+
+  public void doReservation(){
+    model.doReservation();
+  }
 }
 

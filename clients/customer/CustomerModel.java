@@ -5,6 +5,7 @@ import catalogue.Product;
 import debug.DEBUG;
 import middle.MiddleFactory;
 import middle.OrderProcessing;
+import middle.ReservationReadWriter;
 import middle.StockException;
 import middle.StockReader;
 
@@ -27,6 +28,8 @@ public class CustomerModel extends Observable
   private OrderProcessing theOrder     = null;
   private ImageIcon       thePic       = null;
 
+  private ReservationReadWriter theReservationReadWriter = null;
+
   /*
    * Construct the model of the Customer
    * @param mf The factory to create the connection objects
@@ -36,6 +39,7 @@ public class CustomerModel extends Observable
     try                                          // 
     {  
       theStock = mf.makeStockReader();           // Database access
+      theReservationReadWriter = mf.makeReservationReadWriter();
     } catch ( Exception e )
     {
       DEBUG.error("CustomerModel.constructor\n" +
@@ -122,6 +126,14 @@ public class CustomerModel extends Observable
   private void askForUpdate()
   {
     setChanged(); notifyObservers("START only"); // Notify
+  }
+
+  public void doReservation(){
+    System.out.println("Doing reservation model origin!");
+    System.out.println("Adding new reservation!");
+    theReservationReadWriter.insertReservation();
+
+    System.out.println("Reservations: " + theReservationReadWriter.getReservationsSize());
   }
 
   /**

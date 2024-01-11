@@ -52,8 +52,7 @@ class Setup
 
   "drop table ReservationTable",
   "create table ReservationTable ("+
-      "ReservationID    Integer, PRIMARY KEY (ReservationID))",
-
+      "ReservationID    Integer not null GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1), PRIMARY KEY (ReservationID))",
 
   "drop table ReservationStockTable",
   "create table ReservationStockTable ("+
@@ -84,6 +83,11 @@ class Setup
   "ADD CONSTRAINT FK_productNo " +
   "FOREIGN KEY (productNo) " +
   "REFERENCES StockTable(productNo) ",
+
+  "INSERT INTO ReservationTable VALUES DEFAULT",
+  "INSERT INTO ReservationTable VALUES DEFAULT",
+  "INSERT INTO ReservationTable VALUES DEFAULT",
+  "insert into ReservationStockTable values(1, '0001', 1)",
 
   "select * from StockTable, ProductTable " +
           " where StockTable.productNo = ProductTable.productNo"

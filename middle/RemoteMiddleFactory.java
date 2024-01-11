@@ -56,5 +56,15 @@ public class RemoteMiddleFactory implements MiddleFactory
   {
     return new F_Order( theOrder_URL );
   }
+
+  @Override
+  public ReservationReader makeReservationReader() throws StockException {
+    throw new UnsupportedOperationException("Unimplemented method 'makeReservationReader'");
+  }
+
+  @Override
+  public ReservationReadWriter makeReservationReadWriter() throws StockException {
+    throw new UnsupportedOperationException("Unimplemented method 'makeReservationReadWriter'");
+  }
 }
 

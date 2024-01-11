@@ -37,5 +37,19 @@ public interface MiddleFactory
    */
   public OrderProcessing makeOrderProcessing() throws OrderException;
 
+  /**
+   * Return an object to access the database for read/write access
+   * @return instance of ReservationReader
+   * @throws StockException if issue
+   */
+  public ReservationReader makeReservationReader() throws StockException;
+  
+  /**
+   * Return an object to access the database for read/write access
+   * @return instance of ReservationReadWriter
+   * @throws StockException if issue
+   */
+  public ReservationReadWriter makeReservationReadWriter() throws StockException;
+
 }
 
